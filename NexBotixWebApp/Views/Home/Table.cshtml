@@ -1,0 +1,25 @@
+﻿@model IEnumerable<TableOutputModel>
+@{
+    ViewData["Title"] = "Table For Data Returned from API";
+}
+
+<h1>@ViewData["Title"]</h1>
+<table class="table table-responsive table-hover">
+
+    <tr>
+        <th> UserID </th>
+        <th> Total Posts </th>
+        <th> Total Comments for all posts </th>
+    </tr>
+
+    @foreach (var d in Model)
+    {
+        <tr>
+            <td>@d.UserId</td>
+            <td>@d.TotalPosts</td>
+            <td>@d.TotalCommentsForAllPosts</td>
+        </tr>
+
+    }
+</table>
+
