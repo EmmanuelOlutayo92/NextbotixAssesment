@@ -9,21 +9,22 @@ using System.Threading.Tasks;
 
 namespace NexBotixWebApp.Services
 {
-    public class GetData
+    public class GetData : IGetData
     {
         private readonly HttpClient _httpClient;
         public GetData(HttpClient httpClient)
         {
             _httpClient = httpClient;
- 
+
         }
 
-        public IEnumerable<TableOutputModel> keyValues()
+        public IEnumerable<TableOutputModel> DataOutput() 
         {
             int i = 0;
-            var postLists = groupPosts();
-            var commentsDict = countAllComments();
+            var postLists = PostDictionary();
+            var commentsDict = CommentDictionary();
             var output = new List<TableOutputModel>();
+            
 
             foreach (var t in postLists)
             {
@@ -41,6 +42,7 @@ namespace NexBotixWebApp.Services
                         }
                     }
                 }
+               
                 output.Add(new TableOutputModel
                 {
                     UserId = t.Key,
@@ -53,9 +55,9 @@ namespace NexBotixWebApp.Services
             return output.ToList();
         }
 
-        private Dictionary<int, List<PostViewModel>> groupPosts()
+        private Dictionary<int, List<PostViewModel>> PostDictionary()
         {
-            var postList = GetAllItems<PostViewModel>("/posts").GetAwaiter().GetResult();
+            var postList = GetItemsFromEndPoint<PostViewModel>("/posts").GetAwaiter().GetResult();
             var dict = new Dictionary<int, int>();
 
             var dictUpdate = new Dictionary<int, List<PostViewModel>>();
@@ -73,9 +75,9 @@ namespace NexBotixWebApp.Services
             return dictUpdate;
         }
 
-        private Dictionary<int, int> countAllComments()
+        private Dictionary<int, int> CommentDictionary()
         {
-            var commentList = GetAllItems<CommentViewModel>("/comments").GetAwaiter().GetResult();
+            var commentList = GetItemsFromEndPoint<CommentViewModel>("/comments").GetAwaiter().GetResult();
             var dict = new Dictionary<int, int>();
             foreach (var item in commentList)
             {
@@ -84,7 +86,7 @@ namespace NexBotixWebApp.Services
             }
             return dict;
         }
-        private async Task<List<T>> GetAllItems<T>(string endpoint)
+        public async Task<List<T>> GetItemsFromEndPoint<T>(string endpoint)
         {
             List<T> OutputList = null;
 
@@ -92,9 +94,9 @@ namespace NexBotixWebApp.Services
             if (response.IsSuccessStatusCode)
             {
                 string data = await response.Content.ReadAsStringAsync();
-                OutputList =  JsonSerializer.Deserialize<List<T>>(data);
+                OutputList = JsonSerializer.Deserialize<List<T>>(data);
             }
-            return OutputList; 
+            return OutputList;
         }
     }
 }

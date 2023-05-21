@@ -14,10 +14,10 @@ namespace NexBotixWebApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private GetData _data;
+        private IGetData _data;
 
 
-        public HomeController(ILogger<HomeController> logger, GetData Data)
+        public HomeController(ILogger<HomeController> logger, IGetData Data)
         {
             _logger = logger;
             _data = Data;
@@ -35,7 +35,7 @@ namespace NexBotixWebApp.Controllers
 
         public IActionResult Table()
         {
-            return View(_data.keyValues());
+            return View(_data.DataOutput());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
